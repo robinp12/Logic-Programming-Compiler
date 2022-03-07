@@ -165,8 +165,11 @@ public final class Interpreter
 
         // Cases where both operands should not be evaluated.
         switch (node.operator) {
-            case OR:  return booleanOp(node, false);
-            case AND: return booleanOp(node, true);
+            case OR:  return booleanOp(node, 0);
+            case AND: return booleanOp(node, 1);
+            case XOR: return booleanOp(node, 2);
+            case NAND: return booleanOp(node, 3);
+            case NOR: return booleanOp(node, 4);
         }
 
         Object left  = get(node.left);
@@ -194,12 +197,23 @@ public final class Interpreter
 
     // ---------------------------------------------------------------------------------------------
 
-    private boolean booleanOp (BinaryExpressionNode node, boolean isAnd)
+    private boolean booleanOp (BinaryExpressionNode node, int op)
     {
         boolean left = get(node.left);
-        return isAnd
-                ? left && (boolean) get(node.right)
-                : left || (boolean) get(node.right);
+        boolean right = get(node.right);
+        switch (op){
+            case 0:
+                return left || right;
+            case 1:
+                return left && right;
+            case 2:
+                return ( left || right ) && ! ( left && right );
+            case 3:
+                return !(left && right);
+            case 4:
+                return !(left || right);
+        }
+        throw new Error("should not reach here");
     }
 
     // ---------------------------------------------------------------------------------------------

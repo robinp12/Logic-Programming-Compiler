@@ -15,6 +15,7 @@ public enum BinaryOperator
     LOWER_EQUAL("<="),
     AND("&&"),
     OR("||"),
+
     XOR("^"),
     NAND("&-&"),
     NOR("|-|");

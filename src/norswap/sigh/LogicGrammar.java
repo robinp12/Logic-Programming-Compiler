@@ -216,11 +216,11 @@ public class LogicGrammar extends Grammar
 
     public rule assignment_expression = right_expression()
         .operand(or_expression)
-        .infix(" ",
+        .infix(EQUALS,
             $ -> new AssignmentNode($.span(), $.$[0], $.$[1]));
 
     public rule expression =
-        seq(assignment_expression,assignment_expression);
+        seq(assignment_expression);
 
     public rule expression_stmt =
         expression
