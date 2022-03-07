@@ -36,6 +36,7 @@ public final class Test
         walker.walk(tree);
         reactor.run();
 
+
         if (!reactor.errors().isEmpty()) {
             System.out.println(reactor.reportErrors(it ->
                 it.toString() + " (" + ((SighNode) it).span.startString(lineMap) + ")"));
