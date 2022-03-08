@@ -1,5 +1,5 @@
 import norswap.autumn.AutumnTestFixture;
-import norswap.logic.SighGrammar;
+import norswap.logic.LogicGrammar;
 import norswap.logic.ast.*;
 import org.testng.annotations.Test;
 
@@ -9,7 +9,7 @@ import static norswap.logic.ast.BinaryOperator.*;
 public class GrammarTests extends AutumnTestFixture {
     // ---------------------------------------------------------------------------------------------
 
-    private final SighGrammar grammar = new SighGrammar();
+    private final LogicGrammar grammar = new LogicGrammar();
     private final Class<?> grammarClass = grammar.getClass();
 
     // ---------------------------------------------------------------------------------------------

@@ -3,8 +3,8 @@ import norswap.autumn.Grammar;
 import norswap.autumn.Grammar.rule;
 import norswap.autumn.ParseResult;
 import norswap.autumn.positions.LineMapString;
+import norswap.logic.LogicGrammar;
 import norswap.logic.SemanticAnalysis;
-import norswap.logic.SighGrammar;
 import norswap.logic.ast.LogicNode;
 import norswap.logic.interpreter.Interpreter;
 import norswap.logic.interpreter.Null;
@@ -27,7 +27,7 @@ public final class InterpreterTests extends TestFixture {
 
     // ---------------------------------------------------------------------------------------------
 
-    private final SighGrammar grammar = new SighGrammar();
+    private final LogicGrammar grammar = new LogicGrammar();
     private final AutumnTestFixture autumnFixture = new AutumnTestFixture();
 
     {
@@ -174,6 +174,7 @@ public final class InterpreterTests extends TestFixture {
         checkExpr("true  && false", false);
         checkExpr("false && false", false);
         checkExpr("false || false", false);
+        checkExpr("false ^ true", true);
 
         checkExpr("1 + \"a\"", "1a");
         checkExpr("\"a\" + 1", "a1");
@@ -202,7 +203,7 @@ public final class InterpreterTests extends TestFixture {
         checkExpr("[1] != [1]", true);
 
          // test short circuit
-        checkExpr("true || print(\"x\") == \"y\"", true, "");
+        checkExpr("(true || print(\"x\")) == \"y\"", true, "");
         checkExpr("false && print(\"x\") == \"y\"", false, "");
     }
 
