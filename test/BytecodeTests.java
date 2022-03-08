@@ -1,12 +1,12 @@
 import norswap.autumn.Autumn;
 import norswap.autumn.ParseOptions;
 import norswap.autumn.ParseResult;
-import norswap.sigh.SemanticAnalysis;
-import norswap.sigh.SighGrammar;
-import norswap.sigh.ast.SighNode;
-import norswap.sigh.bytecode.ByteArrayClassLoader;
-import norswap.sigh.bytecode.BytecodeCompiler;
-import norswap.sigh.bytecode.CompilationResult;
+import norswap.logic.SemanticAnalysis;
+import norswap.logic.SighGrammar;
+import norswap.logic.ast.LogicNode;
+import norswap.logic.bytecode.ByteArrayClassLoader;
+import norswap.logic.bytecode.BytecodeCompiler;
+import norswap.logic.bytecode.CompilationResult;
 import norswap.uranium.Reactor;
 import norswap.utils.IO;
 import norswap.utils.visitors.Walker;
@@ -33,9 +33,9 @@ public class BytecodeTests
         ParseResult parseResult = Autumn.parse(grammar.root, input, options);
         if (!parseResult.fullMatch) throw new AssertionError(parseResult.toString());
 
-        SighNode tree = cast(parseResult.topValue());
+        LogicNode tree = cast(parseResult.topValue());
         Reactor reactor = new Reactor();
-        Walker<SighNode> walker = SemanticAnalysis.createWalker(reactor);
+        Walker<LogicNode> walker = SemanticAnalysis.createWalker(reactor);
         walker.walk(tree);
         reactor.run();
 

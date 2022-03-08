@@ -1,10 +1,10 @@
 import norswap.autumn.AutumnTestFixture;
-import norswap.sigh.SighGrammar;
-import norswap.sigh.ast.*;
+import norswap.logic.SighGrammar;
+import norswap.logic.ast.*;
 import org.testng.annotations.Test;
 
 import static java.util.Arrays.asList;
-import static norswap.sigh.ast.BinaryOperator.*;
+import static norswap.logic.ast.BinaryOperator.*;
 
 public class GrammarTests extends AutumnTestFixture {
     // ---------------------------------------------------------------------------------------------

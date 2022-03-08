@@ -3,11 +3,11 @@ import norswap.autumn.Grammar;
 import norswap.autumn.Grammar.rule;
 import norswap.autumn.ParseResult;
 import norswap.autumn.positions.LineMapString;
-import norswap.sigh.SemanticAnalysis;
-import norswap.sigh.SighGrammar;
-import norswap.sigh.ast.SighNode;
-import norswap.sigh.interpreter.Interpreter;
-import norswap.sigh.interpreter.Null;
+import norswap.logic.SemanticAnalysis;
+import norswap.logic.SighGrammar;
+import norswap.logic.ast.LogicNode;
+import norswap.logic.interpreter.Interpreter;
+import norswap.logic.interpreter.Null;
 import norswap.uranium.Reactor;
 import norswap.uranium.SemanticError;
 import norswap.utils.IO;
@@ -62,10 +62,10 @@ public final class InterpreterTests extends TestFixture {
 
         autumnFixture.rule = rule;
         ParseResult parseResult = autumnFixture.success(input);
-        SighNode root = parseResult.topValue();
+        LogicNode root = parseResult.topValue();
 
         Reactor reactor = new Reactor();
-        Walker<SighNode> walker = SemanticAnalysis.createWalker(reactor);
+        Walker<LogicNode> walker = SemanticAnalysis.createWalker(reactor);
         Interpreter interpreter = new Interpreter(reactor);
         walker.walk(root);
         reactor.run();
@@ -74,7 +74,7 @@ public final class InterpreterTests extends TestFixture {
         if (!errors.isEmpty()) {
             LineMapString map = new LineMapString("<test>", input);
             String report = reactor.reportErrors(it ->
-                it.toString() + " (" + ((SighNode) it).span.startString(map) + ")");
+                it.toString() + " (" + ((LogicNode) it).span.startString(map) + ")");
             //            String tree = AttributeTreeFormatter.format(root, reactor,
             //                    new ReflectiveFieldWalker<>(SighNode.class, PRE_VISIT, POST_VISIT));
             //            System.err.println(tree);
