@@ -199,7 +199,7 @@ public class SighGrammar extends Grammar
             $ -> new BinaryExpressionNode($.span(), $.$[0], $.$[1], $.$[2]));
 
     public rule xor_expression = left_expression()
-        .operand(nor_expression)
+        .operand(and_expression)
         .infix(XOR.as_val(BinaryOperator.XOR),
             $ -> new BinaryExpressionNode($.span(), $.$[0], $.$[1], $.$[2]));
 //--------------------------------------------------------------------------------------
@@ -229,7 +229,7 @@ public class SighGrammar extends Grammar
 
     public rule type =
         seq(array_type);
-
+// test push
     public rule statement = lazy(() -> choice(
         this.block,
         this.var_decl,

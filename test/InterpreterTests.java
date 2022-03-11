@@ -174,7 +174,7 @@ public final class InterpreterTests extends TestFixture {
         checkExpr("true  && false", false);
         checkExpr("false && false", false);
         checkExpr("false || false", false);
-        checkExpr("false ^ true", true);
+        checkExpr("false ^ true", false);
 
         checkExpr("1 + \"a\"", "1a");
         checkExpr("\"a\" + 1", "a1");
