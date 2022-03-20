@@ -491,7 +491,7 @@ public final class SemanticAnalysis
     }
 
     private boolean isLogic (BinaryOperator op) {
-        return op == AND || op == NAND || op == OR  || op == NOR || op==XOR;
+        return op == AND || op == NAND || op == OR  || op == NOR || op==XOR || op == IMPLIC || op == EQUIV;
     }
 
     private boolean isEquality (BinaryOperator op) {

@@ -177,6 +177,9 @@ public final class InterpreterTests extends TestFixture {
         checkExpr("false !&& true", true);
         checkExpr("false !|| true", false);
         checkExpr("false ^ true", true);
+        checkExpr("false -> true", true);
+        checkExpr("false <=> true", false);
+
 
 
 

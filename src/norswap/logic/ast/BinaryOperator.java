@@ -17,7 +17,9 @@ public enum BinaryOperator
     OR("||"),
     XOR("^"),
     NAND("!&&"),
-    NOR("!||");
+    NOR("!||"),
+    IMPLIC("->") ,
+    EQUIV("<=>") ;
 
 
     public final String string;

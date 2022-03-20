@@ -167,10 +167,12 @@ public final class Interpreter
         switch (node.operator) {
             case AND:  return booleanOp(node, 0);
             case NAND: return booleanOp(node, 1);
+            case IMPLIC:return booleanOp(node,2);
             //case XOR: return booleanOp(node, 2);
-            case NOR: return booleanOp(node, 2);
-            case XOR: return  booleanOp(node,3) ;
-            case OR: return booleanOp(node, 4);
+            case NOR: return booleanOp(node, 3);
+            case XOR: return  booleanOp(node,4) ;
+            case OR: return booleanOp(node, 5);
+            case EQUIV: return booleanOp(node,6) ;
 
 
         }
@@ -209,14 +211,16 @@ public final class Interpreter
                 return left && right;
             case 1:
                 return !(left && right);
-            //case 2:
-                //return ( left || right ) && ! ( left && right );
-            case 2 :
-                return !(left || right) ;
+            case 2:
+                return ( !left || right) ;
             case 3 :
+                return !(left || right) ;
+            case 4 :
                 return ((!left && right) || (left && !right)) ;
-            case 4:
+            case 5:
                 return left || right;
+            case 6 :
+                return (left && right)||(!left && !right);
 
 
 

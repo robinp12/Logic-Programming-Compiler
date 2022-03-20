@@ -372,7 +372,7 @@ public class BytecodeCompiler
     }
 
     private boolean isShortCircuit (BinaryOperator op) {
-        return op == AND || op == NAND || op == OR || op == NOR  || op == XOR;
+        return op == AND || op == NAND || op == OR || op == NOR  || op == XOR || op == IMPLIC || op == EQUIV;
     }
 
     private boolean isArithmetic (BinaryOperator op) {

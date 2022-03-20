@@ -56,6 +56,8 @@ public class LogicGrammar extends Grammar
     public rule XOR             = word("^") ;
     public rule NOR             = word("!||") ;
     public rule NAND             = word("!&&") ;
+    public rule IMPLIC           = word("->");
+    public rule EQUIV            = word("<=>") ;
 
     public rule _var            = reserved("var");
     public rule _fun            = reserved("fun");
@@ -194,10 +196,19 @@ public class LogicGrammar extends Grammar
         .infix(NAND.as_val(BinaryOperator.NAND),
             $ -> new BinaryExpressionNode($.span(), $.$[0], $.$[1], $.$[2]));
 
+    public rule implic_expression = left_expression()
+        .operand(nand_expression)
+        .infix(IMPLIC.as_val(BinaryOperator.IMPLIC),
+            $ -> new BinaryExpressionNode($.span(), $.$[0], $.$[1], $.$[2]));
+    public rule equiv_expression = left_expression()
+        .operand(implic_expression)
+        .infix(EQUIV.as_val(BinaryOperator.EQUIV),
+            $ -> new BinaryExpressionNode($.span(), $.$[0], $.$[1], $.$[2]));
+
 
 
     public rule nor_expression = left_expression()
-        .operand(nand_expression)
+        .operand(equiv_expression)
         .infix(NOR.as_val(BinaryOperator.NOR),
             $ -> new BinaryExpressionNode($.span(), $.$[0], $.$[1], $.$[2]));
     public rule xor_expression = left_expression()
@@ -209,6 +220,10 @@ public class LogicGrammar extends Grammar
         .operand(xor_expression)
         .infix(BAR_BAR.as_val(BinaryOperator.OR),
             $ -> new BinaryExpressionNode($.span(), $.$[0], $.$[1], $.$[2]));
+
+
+
+
 
 
 
