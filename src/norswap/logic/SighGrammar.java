@@ -48,7 +48,7 @@ public class SighGrammar extends Grammar
     public rule AMP_AMP         = word("&&");
     public rule XOR             = word("^");
     public rule NAND             = word("&-&");
-    public rule NOR             = word("|-|");
+    public rule NOR             = word("!||");
     public rule NOT             = word("not");
 
     public rule BAR_BAR         = word("||");
@@ -199,12 +199,12 @@ public class SighGrammar extends Grammar
 //--------------------------------------------------------------------------------------
 
     public rule nor_expression = left_expression()
-        .operand(or_expression)
+        .operand(and_expression)
         .infix(NOR.as_val(BinaryOperator.NOR),
             $ -> new BinaryExpressionNode($.span(), $.$[0], $.$[1], $.$[2]));
 
     public rule xor_expression = left_expression()
-        .operand(and_expression)
+        .operand(or_expression)
         .infix(XOR.as_val(BinaryOperator.XOR),
             $ -> new BinaryExpressionNode($.span(), $.$[0], $.$[1], $.$[2]));
 //--------------------------------------------------------------------------------------

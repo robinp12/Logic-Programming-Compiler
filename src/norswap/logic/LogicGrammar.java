@@ -54,7 +54,7 @@ public class LogicGrammar extends Grammar
 
     /* Features added for logic programming*/
     public rule XOR             = word("^") ;
-    public rule NOR             = word("|-|") ;
+    public rule NOR             = word("!||") ;
     public rule NAND             = word("!&&") ;
 
     public rule _var            = reserved("var");
@@ -157,9 +157,10 @@ public class LogicGrammar extends Grammar
     public rule add_op = choice(
         PLUS        .as_val(BinaryOperator.ADD),
         MINUS       .as_val(BinaryOperator.SUBTRACT));
-    public rule bool_op = choice(
-        NAND        .as_val(BinaryOperator.NAND)
-    );
+    /**public rule bool_op = choice(
+        NAND        .as_val(BinaryOperator.NAND),
+        NOR         .as_val(BinaryOperator.NOR)
+    );*/
     public rule cmp_op = choice(
         EQUALS_EQUALS.as_val(BinaryOperator.EQUALITY),
         BANG_EQUAL  .as_val(BinaryOperator.NOT_EQUALS),
@@ -193,17 +194,27 @@ public class LogicGrammar extends Grammar
         .infix(NAND.as_val(BinaryOperator.NAND),
             $ -> new BinaryExpressionNode($.span(), $.$[0], $.$[1], $.$[2]));
 
-    public rule or_expression = left_expression()
+
+
+    public rule nor_expression = left_expression()
         .operand(nand_expression)
+        .infix(NOR.as_val(BinaryOperator.NOR),
+            $ -> new BinaryExpressionNode($.span(), $.$[0], $.$[1], $.$[2]));
+    public rule xor_expression = left_expression()
+        .operand(nor_expression)
+        .infix(XOR.as_val(BinaryOperator.XOR),
+            $ -> new BinaryExpressionNode($.span(), $.$[0], $.$[1], $.$[2]));
+
+    public rule or_expression = left_expression()
+        .operand(xor_expression)
         .infix(BAR_BAR.as_val(BinaryOperator.OR),
             $ -> new BinaryExpressionNode($.span(), $.$[0], $.$[1], $.$[2]));
 
+
+
     /* Features added for logic programming*/
     // add ou exclusif   let a,b two booleans : (a xor b) is true if a or b is true --- else (a xor b) is false
-    public rule nor_expression = left_expression()
-        .operand(or_expression)
-        .infix(NOR.as_val(BinaryOperator.NOR),
-            $ -> new BinaryExpressionNode($.span(), $.$[0], $.$[1], $.$[2]));
+
 
 
 

@@ -168,8 +168,11 @@ public final class Interpreter
             case AND:  return booleanOp(node, 0);
             case NAND: return booleanOp(node, 1);
             //case XOR: return booleanOp(node, 2);
-            case OR: return booleanOp(node, 2);
-            //case NOR: return booleanOp(node, 4);
+            case NOR: return booleanOp(node, 2);
+            case XOR: return  booleanOp(node,3) ;
+            case OR: return booleanOp(node, 4);
+
+
         }
 
         Object left  = get(node.left);
@@ -208,8 +211,14 @@ public final class Interpreter
                 return !(left && right);
             //case 2:
                 //return ( left || right ) && ! ( left && right );
-            case 2:
+            case 2 :
+                return !(left || right) ;
+            case 3 :
+                return ((!left && right) || (left && !right)) ;
+            case 4:
                 return left || right;
+
+
 
 
         }

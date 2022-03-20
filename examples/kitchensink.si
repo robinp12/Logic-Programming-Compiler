@@ -3,8 +3,12 @@ fun testNand()
 {
     var x : Bool = true !&& false
     var y : Bool = true !&& true
-    print(" on a réussi le nand : (true !&& false)? --->" + x)
-    print(" on a réussi le nand : (true !&& true)? --->" + y)
+    var nor : Bool = true !|| false
+    var xor : Bool = true ^ false
+    print(" on a réussi le NAND : (true !&& false)? --->" + x)
+    print(" on a réussi le NOR : (true !|| false)? --->" + nor)
+    print(" on a réussi le XOR : (true ^ false)? --->" + xor)
+
    }
 fun array_add (a: Int[]): Int
 {
