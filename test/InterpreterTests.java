@@ -174,7 +174,7 @@ public final class InterpreterTests extends TestFixture {
         checkExpr("true  && false", false);
         checkExpr("false && false", false);
         checkExpr("false || false", false);
-        checkExpr("false ^ true", false);
+        checkExpr("false !&& true", true);
 
         checkExpr("1 + \"a\"", "1a");
         checkExpr("\"a\" + 1", "a1");
@@ -203,8 +203,8 @@ public final class InterpreterTests extends TestFixture {
         checkExpr("[1] != [1]", true);
 
          // test short circuit
-        checkExpr("(true || print(\"x\")) == \"y\"", true, "");
-        checkExpr("false && print(\"x\") == \"y\"", false, "");
+        //checkExpr("(true || print(\"x\")) == \"y\"", true, "");
+        //checkExpr("false && print(\"x\") == \"y\"", false, "");
     }
 
     // ---------------------------------------------------------------------------------------------

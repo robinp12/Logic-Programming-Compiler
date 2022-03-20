@@ -157,6 +157,7 @@ public class BytecodeTests
         checkExpr("true  && false", "false");
         checkExpr("false && false", "false");
         checkExpr("false || false", "false");
+        checkExpr("true !&& false", "true");
 
         checkExpr("1 + \"a\"", "1a");
         checkExpr("\"a\" + 1", "a1");

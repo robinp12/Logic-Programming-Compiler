@@ -1,5 +1,11 @@
 // This file showcases every single syntactic feature in the language.
-
+fun testNand()
+{
+    var x : Bool = true !&& false
+    var y : Bool = true !&& true
+    print(" on a réussi le nand : (true !&& false)? --->" + x)
+    print(" on a réussi le nand : (true !&& true)? --->" + y)
+   }
 fun array_add (a: Int[]): Int
 {
     fun add (a: Int, b: Int): Int {
@@ -63,3 +69,4 @@ fun use_array (array: Int[]) {}
 var intArray: Int[] = []
 var stringArray: String[] = []
 use_array([])
+testNand()

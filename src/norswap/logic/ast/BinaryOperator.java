@@ -15,10 +15,8 @@ public enum BinaryOperator
     LOWER_EQUAL("<="),
     AND("&&"),
     OR("||"),
-
-    /* Features added for logic programming*/
     XOR("^"),
-    NAND("&-&"),
+    NAND("!&&"),
     NOR("|-|");
 
 

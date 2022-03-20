@@ -165,11 +165,11 @@ public final class Interpreter
 
         // Cases where both operands should not be evaluated.
         switch (node.operator) {
-            case OR:  return booleanOp(node, 0);
-            case AND: return booleanOp(node, 1);
-            case XOR: return booleanOp(node, 2);
-            case NAND: return booleanOp(node, 3);
-            case NOR: return booleanOp(node, 4);
+            case AND:  return booleanOp(node, 0);
+            case NAND: return booleanOp(node, 1);
+            //case XOR: return booleanOp(node, 2);
+            case OR: return booleanOp(node, 2);
+            //case NOR: return booleanOp(node, 4);
         }
 
         Object left  = get(node.left);
@@ -203,15 +203,15 @@ public final class Interpreter
         boolean right = get(node.right);
         switch (op){
             case 0:
-                return left || right;
-            case 1:
                 return left && right;
-            case 2:
-                return ( left || right ) && ! ( left && right );
-            case 3:
+            case 1:
                 return !(left && right);
-            case 4:
-                return !(left || right);
+            //case 2:
+                //return ( left || right ) && ! ( left && right );
+            case 2:
+                return left || right;
+
+
         }
         throw new Error("should not reach here");
     }
