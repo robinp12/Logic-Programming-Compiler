@@ -11,7 +11,7 @@ fun testNand()
     print(" on a réussi le NOR : (true !|| false)? --->" + nor)
     print(" on a réussi le XOR : (true ^ false)? --->" + xor)
     print(" on a réussi l' Implication : (true -> false)? --->" + implic)
-    print(" on a réussi l' Implication : (true <=> false)? --->" + equiv)
+    print(" on a réussi l' Equivalence : (true <=> false)? --->" + equiv)
 
    }
 fun array_add (a: Int[]): Int
