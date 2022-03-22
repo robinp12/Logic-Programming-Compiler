@@ -221,23 +221,10 @@ public class LogicGrammar extends Grammar
         .infix(BAR_BAR.as_val(BinaryOperator.OR),
             $ -> new BinaryExpressionNode($.span(), $.$[0], $.$[1], $.$[2]));
 
-
-
-
-
-
-
     /* Features added for logic programming*/
     // add ou exclusif   let a,b two booleans : (a xor b) is true if a or b is true --- else (a xor b) is false
 
-
-
-
-
     //--------------------------------------------------------------------
-
-
-
 
 
     public rule assignment_expression = right_expression()
@@ -301,6 +288,10 @@ public class LogicGrammar extends Grammar
     public rule fun_decl =
         seq(_fun, identifier, LPAREN, parameters, RPAREN, maybe_return_type, block)
             .push($ -> new FunDeclarationNode($.span(), $.$[0], $.$[1], $.$[2], $.$[3]));
+
+    public rule fact_decl =
+        seq(_fun, identifier, LPAREN, parameters, RPAREN)
+            .push($ -> new FactDeclarationNode($.span(), $.$[0], $.$[1]));
 
     public rule field_decl =
         seq(_var, identifier, COLON, type)
