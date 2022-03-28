@@ -27,3 +27,14 @@ Tests:
 - [`InterpreterTests`](/test/InterpreterTests.java)
 - [`InterpreterTests`](/test/InterpreterTests.java)
 - [`BytecodeTests`](/test/BytecodeTests.java)
+
+- TODO :
+- Variable 
+A fact is a predicate expression that makes a declarative statement about the problem domain. Whenever a variable occurs in a Prolog expression, it is assumed to be universally quantified. Note that all Prolog sentences must end with a period.
+    likes(john, susie).                   /* John likes Susie */
+    likes(X, susie).                      /* Everyone likes Susie *
+
+-A rule is a predicate expression that uses logical implication (:-) to describe a relationship among facts. Thus a Prolog rule takes the form
+    left_hand_side :- right_hand_side .
+   rule nom_rule(X,Y)
+- 

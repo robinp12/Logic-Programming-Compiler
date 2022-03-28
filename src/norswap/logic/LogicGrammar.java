@@ -291,7 +291,7 @@ public class LogicGrammar extends Grammar
 
     public rule fact_decl =
         seq(_fun, identifier, LPAREN, parameters, RPAREN)
-            .push($ -> new FactDeclarationNode($.span(), $.$[0], $.$[1]));
+            .push($ -> new RuleDeclarationNode($.span(), $.$[0], $.$[1]));
 
     public rule field_decl =
         seq(_var, identifier, COLON, type)
