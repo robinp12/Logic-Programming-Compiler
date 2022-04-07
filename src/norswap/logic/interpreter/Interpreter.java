@@ -455,6 +455,41 @@ public final class Interpreter
         return null;
     }
 
+    // For Logic Programming
+    private Object ruleCall (RuleCallNode node)
+    {
+        Object decl = get(node.rule);
+        node.arguments.forEach(this::run);
+        Object[] args = map(node.arguments, new Object[0], visitor);
+
+        if (decl == Null.INSTANCE)
+            throw new PassthroughException(new NullPointerException("calling a null rule"));
+
+        if (decl instanceof SyntheticDeclarationNode)
+            return builtin(((SyntheticDeclarationNode) decl).name(), args);
+
+        if (decl instanceof Constructor)
+            return buildStruct(((Constructor) decl).declaration, args);
+
+        ScopeStorage oldStorage = storage;
+        Scope scope = reactor.get(decl, "scope");
+        storage = new ScopeStorage(scope, storage);
+
+        RuleDeclarationNode ruleDecl = (RuleDeclarationNode) decl;
+        coIterate(args, ruleDecl.parameters,
+            (arg, param) -> storage.set(scope, param.name, arg));
+
+        try {
+            get(ruleDecl.parameters.get(0));
+        } catch (Return r) {
+            return r.value;
+        } finally {
+            storage = oldStorage;
+        }
+        return null;
+    }
+
+
     // ---------------------------------------------------------------------------------------------
 
     private Object builtin (String name, Object[] args)
@@ -475,6 +510,8 @@ public final class Interpreter
             return Arrays.deepToString((Object[]) arg);
         else if (arg instanceof FunDeclarationNode)
             return ((FunDeclarationNode) arg).name;
+        else if (arg instanceof RuleDeclarationNode)
+            return ((RuleDeclarationNode) arg).name;
         else if (arg instanceof StructDeclarationNode)
             return ((StructDeclarationNode) arg).name;
         else if (arg instanceof Constructor)

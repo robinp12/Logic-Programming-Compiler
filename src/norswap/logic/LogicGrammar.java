@@ -61,6 +61,7 @@ public class LogicGrammar extends Grammar
 
     public rule _var            = reserved("var");
     public rule _fun            = reserved("fun");
+    public rule _rule            = reserved("rule");
     public rule _struct         = reserved("struct");
     public rule _if             = reserved("if");
     public rule _else           = reserved("else");
@@ -135,6 +136,10 @@ public class LogicGrammar extends Grammar
     public rule function_args =
         seq(LPAREN, expressions, RPAREN);
 
+    // For Logic Programming
+    public rule rule_args =
+        seq(LPAREN, expressions, RPAREN);
+
     public rule suffix_expression = left_expression()
         .left(basic_expression)
         .suffix(seq(DOT, identifier),
@@ -142,7 +147,9 @@ public class LogicGrammar extends Grammar
         .suffix(seq(LSQUARE, lazy(() -> this.expression), RSQUARE),
             $ -> new ArrayAccessNode($.span(), $.$[0], $.$[1]))
         .suffix(function_args,
-            $ -> new FunCallNode($.span(), $.$[0], $.$[1]));
+            $ -> new FunCallNode($.span(), $.$[0], $.$[1]))
+        .suffix(rule_args,
+            $ -> new RuleCallNode($.span(), $.$[0], $.$[1]));
 
     public rule prefix_expression = right_expression()
         .operand(suffix_expression)
@@ -159,10 +166,7 @@ public class LogicGrammar extends Grammar
     public rule add_op = choice(
         PLUS        .as_val(BinaryOperator.ADD),
         MINUS       .as_val(BinaryOperator.SUBTRACT));
-    /**public rule bool_op = choice(
-        NAND        .as_val(BinaryOperator.NAND),
-        NOR         .as_val(BinaryOperator.NOR)
-    );*/
+
     public rule cmp_op = choice(
         EQUALS_EQUALS.as_val(BinaryOperator.EQUALITY),
         BANG_EQUAL  .as_val(BinaryOperator.NOT_EQUALS),
@@ -238,7 +242,7 @@ public class LogicGrammar extends Grammar
     public rule expression_stmt =
         expression
             .filter($ -> {
-                if (!($.$[0] instanceof AssignmentNode || $.$[0] instanceof FunCallNode))
+                if (!($.$[0] instanceof AssignmentNode || $.$[0] instanceof FunCallNode || $.$[0] instanceof RuleCallNode))
                     return false;
                 $.push(new ExpressionStatementNode($.span(), $.$[0]));
                 return true;
@@ -256,6 +260,7 @@ public class LogicGrammar extends Grammar
         this.block,
         this.var_decl,
         this.fun_decl,
+        this.rule_decl,
         this.struct_decl,
         this.if_stmt,
         this.while_stmt,
@@ -289,8 +294,9 @@ public class LogicGrammar extends Grammar
         seq(_fun, identifier, LPAREN, parameters, RPAREN, maybe_return_type, block)
             .push($ -> new FunDeclarationNode($.span(), $.$[0], $.$[1], $.$[2], $.$[3]));
 
-    public rule fact_decl =
-        seq(_fun, identifier, LPAREN, parameters, RPAREN)
+    // For Logic Programming
+    public rule rule_decl =
+        seq(_rule, identifier, LPAREN, parameters, RPAREN)
             .push($ -> new RuleDeclarationNode($.span(), $.$[0], $.$[1]));
 
     public rule field_decl =

@@ -437,6 +437,52 @@ public final class SemanticAnalysis
             }
         });
     }
+    // For Logic Programming
+    private void RuleCall (RuleCallNode node)
+    {
+        this.inferenceContext = node;
+
+        Attribute[] dependencies = new Attribute[node.arguments.size() + 1];
+        dependencies[0] = node.rule.attr("type");
+        forEachIndexed(node.arguments, (i, arg) -> {
+            dependencies[i + 1] = arg.attr("type");
+            R.set(arg, "index", i);
+        });
+
+        R.rule(node, "type")
+            .using(dependencies)
+            .by(r -> {
+                Type maybeRuleType = r.get(0);
+
+                if (!(maybeRuleType instanceof RuleType)) {
+                    r.error("trying to call a non-rule expression: " + node.rule, node.rule);
+                    return;
+                }
+
+                RuleType ruleType = cast(maybeRuleType);
+                r.set(0, ruleType.returnType);
+
+                Type[] params = ruleType.paramTypes;
+                List<ExpressionNode> args = node.arguments;
+
+                if (params.length != args.size())
+                    r.errorFor(format("wrong number of arguments, expected %d but got %d",
+                            params.length, args.size()),
+                        node);
+
+                int checkedArgs = Math.min(params.length, args.size());
+
+                for (int i = 0; i < checkedArgs; ++i) {
+                    Type argType = r.get(i + 1);
+                    Type paramType = ruleType.paramTypes[i];
+                    if (!isAssignableTo(argType, paramType))
+                        r.errorFor(format(
+                                "incompatible argument provided for argument %d: expected %s but got %s",
+                                i, paramType, argType),
+                            node.arguments.get(i));
+                }
+            });
+    }
 
     // ---------------------------------------------------------------------------------------------
 
@@ -804,6 +850,37 @@ public final class SemanticAnalysis
         });
     }
 
+    // For Logic Programming
+    private void RuleDecl (FunDeclarationNode node)
+    {
+        scope.declare(node.name, node);
+        scope = new Scope(node, scope);
+        R.set(node, "scope", scope);
+
+        Attribute[] dependencies = new Attribute[node.parameters.size() + 1];
+        dependencies[0] = node.returnType.attr("value");
+        forEachIndexed(node.parameters, (i, param) ->
+            dependencies[i + 1] = param.attr("type"));
+
+        R.rule(node, "type")
+            .using(dependencies)
+            .by (r -> {
+                Type[] paramTypes = new Type[node.parameters.size()];
+                for (int i = 0; i < paramTypes.length; ++i)
+                    paramTypes[i] = r.get(i + 1);
+                r.set(0, new RuleType(r.get(0), paramTypes));
+            });
+
+        R.rule()
+            .using(node.block.attr("returns"), node.returnType.attr("value"))
+            .by(r -> {
+                boolean returns = r.get(0);
+                Type returnType = r.get(1);
+                if (!returns && !(returnType instanceof VoidType))
+                    r.error("Missing return in function.", node);
+                // NOTE: The returned value presence & type is checked in returnStmt().
+            });
+    }
     // ---------------------------------------------------------------------------------------------
 
     private void structDecl (StructDeclarationNode node) {
@@ -891,6 +968,19 @@ public final class SemanticAnalysis
             LogicNode node = scope.node;
             if (node instanceof FunDeclarationNode)
                 return (FunDeclarationNode) node;
+            scope = scope.parent;
+        }
+        return null;
+    }
+
+    // For Logic Programming
+    private RuleDeclarationNode currentRule()
+    {
+        Scope scope = this.scope;
+        while (scope != null) {
+            LogicNode node = scope.node;
+            if (node instanceof RuleDeclarationNode)
+                return (RuleDeclarationNode) node;
             scope = scope.parent;
         }
         return null;

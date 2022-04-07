@@ -4,23 +4,20 @@ import norswap.autumn.positions.Span;
 import norswap.utils.Util;
 import java.util.List;
 
+// For Logic Programming
 public class RuleDeclarationNode extends DeclarationNode
 {
     public final String name;
     public final List<ParameterNode> parameters;
     public final TypeNode returnType;
-    public final BlockNode block;
 
     @SuppressWarnings("unchecked")
     public RuleDeclarationNode
-        (Span span, Object name, Object parameters, Object returnType, Object block) {
+        (Span span, Object name, Object parameters) {
         super(span);
         this.name = Util.cast(name, String.class);
         this.parameters = Util.cast(parameters, List.class);
-        this.returnType = returnType == null
-            ? new SimpleTypeNode(new Span(span.start, span.start), "Void")
-            : Util.cast(returnType, TypeNode.class);
-        this.block = Util.cast(block, BlockNode.class);
+        this.returnType = new SimpleTypeNode(new Span(span.start, span.start), "Bool");
     }
 
     @Override public String name () {
@@ -32,6 +29,6 @@ public class RuleDeclarationNode extends DeclarationNode
     }
 
     @Override public String declaredThing () {
-        return "function";
+        return "rule";
     }
 }
