@@ -18,7 +18,7 @@ public final class LogicTest
 {
     public static void main (String[] args) {
 //         String file = "fizzbuzz.si";
-        String file = "kitchensink.si";
+        String file = "logic.si";
         String path = Paths.get("examples/", file).toAbsolutePath().toString();
         String src = IO.slurp(path);
         LogicGrammar grammar = new LogicGrammar();

@@ -1,0 +1,26 @@
+// This file showcases every single syntactic feature in the language.
+var x : Bool = true !&& false
+var y : Bool = true !&& true
+var nor : Bool = true !|| false
+var xor : Bool = true ^ false
+var implic : Bool = true -> false
+var equiv : Bool = true <=> false
+print(" on a réussi le NAND : (true !&& false)? --->" + x)
+print(" on a réussi le NOR : (true !|| false)? --->" + nor)
+print(" on a réussi le XOR : (true ^ false)? --->" + xor)
+print(" on a réussi l' Implication : (true -> false)? --->" + implic)
+print(" on a réussi l' Equivalence : (true <=> false)? --->" + equiv)
+
+var chris : Bool = true
+var kev : Bool = false
+var chloe : Bool = true
+rule likes (a: Bool, b: Bool): Bool
+{
+    return a -> b
+}
+rule friends (a: Bool, b: Bool): Bool
+{
+    return likes(a,b) && likes(b,a)
+}
+print("rule friends(chris,kev) : " + friends(chris,kev))
+print("rule friends(chloe,chris) : " + friends(chloe,chris))

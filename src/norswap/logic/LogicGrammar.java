@@ -60,7 +60,7 @@ public class LogicGrammar extends Grammar
     public rule EQUIV            = word("<=>") ;
 
     public rule _var            = reserved("var");
-    public rule _fun            = reserved("fun");
+    //public rule _fun            = reserved("fun");
     public rule _rule            = reserved("rule");
     public rule _struct         = reserved("struct");
     public rule _if             = reserved("if");
@@ -133,8 +133,8 @@ public class LogicGrammar extends Grammar
         paren_expression,
         array);
 
-    public rule function_args =
-        seq(LPAREN, expressions, RPAREN);
+    /*public rule function_args =
+        seq(LPAREN, expressions, RPAREN);*/
 
     // For Logic Programming
     public rule rule_args =
@@ -146,10 +146,10 @@ public class LogicGrammar extends Grammar
             $ -> new FieldAccessNode($.span(), $.$[0], $.$[1]))
         .suffix(seq(LSQUARE, lazy(() -> this.expression), RSQUARE),
             $ -> new ArrayAccessNode($.span(), $.$[0], $.$[1]))
-        .suffix(function_args,
-            $ -> new FunCallNode($.span(), $.$[0], $.$[1]))
         .suffix(rule_args,
             $ -> new RuleCallNode($.span(), $.$[0], $.$[1]));
+        //.suffix(function_args,
+        //    $ -> new FunCallNode($.span(), $.$[0], $.$[1]));
 
     public rule prefix_expression = right_expression()
         .operand(suffix_expression)
@@ -242,7 +242,9 @@ public class LogicGrammar extends Grammar
     public rule expression_stmt =
         expression
             .filter($ -> {
-                if (!($.$[0] instanceof AssignmentNode || $.$[0] instanceof FunCallNode || $.$[0] instanceof RuleCallNode))
+                if (!($.$[0] instanceof AssignmentNode ||
+                    //$.$[0] instanceof FunCallNode ||
+                    $.$[0] instanceof RuleCallNode))
                     return false;
                 $.push(new ExpressionStatementNode($.span(), $.$[0]));
                 return true;
@@ -259,7 +261,7 @@ public class LogicGrammar extends Grammar
     public rule statement = lazy(() -> choice(
         this.block,
         this.var_decl,
-        this.fun_decl,
+        //this.fun_decl,
         this.rule_decl,
         this.struct_decl,
         this.if_stmt,
@@ -290,14 +292,14 @@ public class LogicGrammar extends Grammar
     public rule maybe_return_type =
         seq(COLON, type).or_push_null();
 
-    public rule fun_decl =
+    /*public rule fun_decl =
         seq(_fun, identifier, LPAREN, parameters, RPAREN, maybe_return_type, block)
-            .push($ -> new FunDeclarationNode($.span(), $.$[0], $.$[1], $.$[2], $.$[3]));
+            .push($ -> new FunDeclarationNode($.span(), $.$[0], $.$[1], $.$[2], $.$[3]));*/
 
     // For Logic Programming
     public rule rule_decl =
-        seq(_rule, identifier, LPAREN, parameters, RPAREN)
-            .push($ -> new RuleDeclarationNode($.span(), $.$[0], $.$[1]));
+        seq(_rule, identifier, LPAREN, parameters, RPAREN, maybe_return_type, block)
+            .push($ -> new RuleDeclarationNode($.span(), $.$[0], $.$[1], $.$[2], $.$[3]));
 
     public rule field_decl =
         seq(_var, identifier, COLON, type)

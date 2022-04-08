@@ -11,9 +11,9 @@ public final class RuleCallNode extends ExpressionNode
     public final List<ExpressionNode> arguments;
 
     @SuppressWarnings("unchecked")
-    public RuleCallNode (Span span, Object function, Object arguments) {
+    public RuleCallNode (Span span, Object rule, Object arguments) {
         super(span);
-        this.rule = Util.cast(function, ExpressionNode.class);
+        this.rule = Util.cast(rule, ExpressionNode.class);
         this.arguments = Util.cast(arguments, List.class);
     }
 

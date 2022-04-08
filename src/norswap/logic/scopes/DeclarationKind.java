@@ -6,5 +6,6 @@ package norswap.logic.scopes;
 public enum DeclarationKind {
     TYPE,
     FUNCTION,
+    RULE,
     VARIABLE
 }

@@ -118,7 +118,8 @@ public final class SemanticAnalysis
         walker.register(ParenthesizedNode.class,        PRE_VISIT,  analysis::parenthesized);
         walker.register(FieldAccessNode.class,          PRE_VISIT,  analysis::fieldAccess);
         walker.register(ArrayAccessNode.class,          PRE_VISIT,  analysis::arrayAccess);
-        walker.register(FunCallNode.class,              PRE_VISIT,  analysis::funCall);
+        //walker.register(FunCallNode.class,              PRE_VISIT,  analysis::funCall);
+        walker.register(RuleCallNode.class,              PRE_VISIT,  analysis::ruleCall);
         walker.register(UnaryExpressionNode.class,      PRE_VISIT,  analysis::unaryExpression);
         walker.register(BinaryExpressionNode.class,     PRE_VISIT,  analysis::binaryExpression);
         walker.register(AssignmentNode.class,           PRE_VISIT,  analysis::assignment);
@@ -133,12 +134,14 @@ public final class SemanticAnalysis
         walker.register(VarDeclarationNode.class,       PRE_VISIT,  analysis::varDecl);
         walker.register(FieldDeclarationNode.class,     PRE_VISIT,  analysis::fieldDecl);
         walker.register(ParameterNode.class,            PRE_VISIT,  analysis::parameter);
-        walker.register(FunDeclarationNode.class,       PRE_VISIT,  analysis::funDecl);
+        //walker.register(FunDeclarationNode.class,       PRE_VISIT,  analysis::funDecl);
+        walker.register(RuleDeclarationNode.class,       PRE_VISIT,  analysis::ruleDecl);
         walker.register(StructDeclarationNode.class,    PRE_VISIT,  analysis::structDecl);
 
         walker.register(RootNode.class,                 POST_VISIT, analysis::popScope);
         walker.register(BlockNode.class,                POST_VISIT, analysis::popScope);
         walker.register(FunDeclarationNode.class,       POST_VISIT, analysis::popScope);
+        walker.register(RuleDeclarationNode.class,       POST_VISIT, analysis::popScope);
 
         // statements
         walker.register(ExpressionStatementNode.class,  PRE_VISIT,  node -> {});
@@ -261,18 +264,25 @@ public final class SemanticAnalysis
             // Empty array: we need a type int to know the desired type.
 
             final LogicNode context = this.inferenceContext;
-
             if (context instanceof VarDeclarationNode)
                 R.rule(node, "type")
                 .using(context, "type")
                 .by(Rule::copyFirst);
-            else if (context instanceof FunCallNode) {
+            /*else if (context instanceof FunCallNode) {
                 R.rule(node, "type")
                 .using(((FunCallNode) context).function.attr("type"), node.attr("index"))
                 .by(r -> {
                     FunType funType = r.get(0);
                     r.set(0, funType.paramTypes[(int) r.get(1)]);
                 });
+            }*/
+            else if (context instanceof RuleCallNode) {
+                R.rule(node, "type")
+                    .using(((RuleCallNode) context).rule.attr("type"), node.attr("index"))
+                    .by(r -> {
+                        RuleType ruleType = r.get(0);
+                        r.set(0, ruleType.paramTypes[(int) r.get(1)]);
+                    });
             }
             return;
         }
@@ -407,7 +417,6 @@ public final class SemanticAnalysis
         .using(dependencies)
         .by(r -> {
             Type maybeFunType = r.get(0);
-
             if (!(maybeFunType instanceof FunType)) {
                 r.error("trying to call a non-function expression: " + node.function, node.function);
                 return;
@@ -438,7 +447,7 @@ public final class SemanticAnalysis
         });
     }
     // For Logic Programming
-    private void RuleCall (RuleCallNode node)
+    private void ruleCall (RuleCallNode node)
     {
         this.inferenceContext = node;
 
@@ -851,7 +860,7 @@ public final class SemanticAnalysis
     }
 
     // For Logic Programming
-    private void RuleDecl (FunDeclarationNode node)
+    private void ruleDecl (RuleDeclarationNode node)
     {
         scope.declare(node.name, node);
         scope = new Scope(node, scope);
@@ -877,7 +886,7 @@ public final class SemanticAnalysis
                 boolean returns = r.get(0);
                 Type returnType = r.get(1);
                 if (!returns && !(returnType instanceof VoidType))
-                    r.error("Missing return in function.", node);
+                    r.error("Missing return in rule.", node);
                 // NOTE: The returned value presence & type is checked in returnStmt().
             });
     }

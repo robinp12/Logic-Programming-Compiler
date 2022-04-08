@@ -96,6 +96,7 @@ public class BytecodeCompiler
         visitor.register(FieldAccessNode.class,          this::fieldAccess);
         visitor.register(ArrayAccessNode.class,          this::arrayAccess);
         visitor.register(FunCallNode.class,              this::funCall);
+        visitor.register(RuleCallNode.class,              this::ruleCall);
         visitor.register(UnaryExpressionNode.class,      this::unaryExpression);
         visitor.register(BinaryExpressionNode.class,     this::binaryExpression);
         visitor.register(AssignmentNode.class,           this::assignment);
@@ -562,6 +563,43 @@ public class BytecodeCompiler
         return null;
     }
 
+    // For Logic Programming
+    private Object ruleCall (RuleCallNode node)
+    {
+        RuleType ruleType = reactor.get(node.rule, "type");
+
+        // The function part can either be a reference, in which case we emit a call,
+        // or a more complex expression, which will evaluate to a lambda.
+
+        if (node.rule instanceof ReferenceNode) {
+            DeclarationNode decl = reactor.get(node.rule, "decl");
+            if (decl instanceof SyntheticDeclarationNode) {
+                return builtin(ruleType, decl.name(), node.arguments);
+            }
+            else if (decl instanceof FunDeclarationNode) {
+                runArguments(ruleType, node.arguments);
+                method.visitMethodInsn(INVOKESTATIC, containerName,
+                    decl.name(), methodDescriptor(ruleType), false);
+            }
+            else { // TODO
+                throw new UnsupportedOperationException("variables or parameters containing a function value");
+            }
+        }
+        else if (node.rule instanceof ConstructorNode) {
+            StructDeclarationNode decl = reactor.get(((ConstructorNode) node.rule).ref, "decl");
+            String binaryName = structBinaryName(reactor.get(decl, "declared"));
+            method.visitTypeInsn(NEW, binaryName);
+            method.visitInsn(DUP);
+            runArguments(ruleType, node.arguments);
+            String descriptor = methodDescriptor(VoidType.INSTANCE, ruleType.paramTypes);
+            method.visitMethodInsn(INVOKESPECIAL, binaryName, "<init>", descriptor, false);
+        }
+        else
+            throw new UnsupportedOperationException("complex expression evaluating to a function value");
+
+        return null;
+    }
+
     // ---------------------------------------------------------------------------------------------
 
     private Object builtin (FunType funType, String name, List<ExpressionNode> arguments)
@@ -570,6 +608,19 @@ public class BytecodeCompiler
         method.visitFieldInsn(GETSTATIC, "java/lang/System", "out",
             "Ljava/io/PrintStream;");
         runArguments(funType, arguments);
+        method.visitInsn(DUP_X1); // we return the printed string!
+        method.visitMethodInsn(INVOKEVIRTUAL, "java/io/PrintStream", "println",
+            "(Ljava/lang/String;)V", false);
+        return null;
+    }
+
+    // For Logic Programming
+    private Object builtin (RuleType ruleType, String name, List<ExpressionNode> arguments)
+    {
+        assert name.equals("print"); // only one at the moment
+        method.visitFieldInsn(GETSTATIC, "java/lang/System", "out",
+            "Ljava/io/PrintStream;");
+        runArguments(ruleType, arguments);
         method.visitInsn(DUP_X1); // we return the printed string!
         method.visitMethodInsn(INVOKEVIRTUAL, "java/io/PrintStream", "println",
             "(Ljava/lang/String;)V", false);
@@ -587,6 +638,15 @@ public class BytecodeCompiler
         Vanilla.forEachIndexed(arguments, (i, arg) -> {
             run(arg);
             implicitConversion(funType.paramTypes[i], reactor.get(arg, "type"));
+        });
+    }
+
+    // For Logic Programming
+    private void runArguments (RuleType ruleType, List<ExpressionNode> arguments)
+    {
+        Vanilla.forEachIndexed(arguments, (i, arg) -> {
+            run(arg);
+            implicitConversion(ruleType.paramTypes[i], reactor.get(arg, "type"));
         });
     }
 

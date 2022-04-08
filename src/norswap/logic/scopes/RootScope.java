@@ -36,7 +36,7 @@ public final class RootScope extends Scope
     public final SyntheticDeclarationNode _null  = decl("null",  VARIABLE);
 
     // root scope functions
-    public final SyntheticDeclarationNode print = decl("print", FUNCTION);
+    public final SyntheticDeclarationNode print = decl("print", RULE);
 
     // ---------------------------------------------------------------------------------------------
 
@@ -61,7 +61,7 @@ public final class RootScope extends Scope
         reactor.set(_false, "type",       BoolType.INSTANCE);
         reactor.set(_null,  "type",       NullType.INSTANCE);
 
-        reactor.set(print,  "type", new FunType(StringType.INSTANCE, StringType.INSTANCE));
+        reactor.set(print,  "type", new RuleType(StringType.INSTANCE, StringType.INSTANCE));
     }
 
     // ---------------------------------------------------------------------------------------------

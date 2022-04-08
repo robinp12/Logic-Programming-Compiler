@@ -288,6 +288,15 @@ public final class SemanticAnalysisTests extends UraniumTestFixture
         successInput("struct S{} ; var type: Type = S ; return \"\"+ type");
     }
 
+    @Test public void testRule() {
+        successInput("var paul: Bool = true\n" +
+            "rule male (a: Bool): Bool\n" +
+            "{\n" +
+            "    return a\n" +
+            "}\n" +
+            "male(paul)");
+    }
+
     // ---------------------------------------------------------------------------------------------
 
     @Test public void testUnconditionalReturn()

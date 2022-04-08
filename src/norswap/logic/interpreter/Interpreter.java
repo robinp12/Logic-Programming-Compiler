@@ -70,7 +70,8 @@ public final class Interpreter
         visitor.register(ParenthesizedNode.class,        this::parenthesized);
         visitor.register(FieldAccessNode.class,          this::fieldAccess);
         visitor.register(ArrayAccessNode.class,          this::arrayAccess);
-        visitor.register(FunCallNode.class,              this::funCall);
+        //visitor.register(FunCallNode.class,              this::funCall);
+        visitor.register(RuleCallNode.class,             this::ruleCall);
         visitor.register(UnaryExpressionNode.class,      this::unaryExpression);
         visitor.register(BinaryExpressionNode.class,     this::binaryExpression);
         visitor.register(AssignmentNode.class,           this::assignment);
@@ -480,7 +481,7 @@ public final class Interpreter
             (arg, param) -> storage.set(scope, param.name, arg));
 
         try {
-            get(ruleDecl.parameters.get(0));
+            get(ruleDecl.block);
         } catch (Return r) {
             return r.value;
         } finally {
