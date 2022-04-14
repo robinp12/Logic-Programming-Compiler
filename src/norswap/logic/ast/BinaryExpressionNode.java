@@ -10,7 +10,6 @@ public final class BinaryExpressionNode extends ExpressionNode
 
     public BinaryExpressionNode (Span span, Object left, Object operator, Object right) {
         super(span);
-        System.out.println(left + " "+ operator + " " +right);
         this.left = Util.cast(left, ExpressionNode.class);
         this.right = Util.cast(right, ExpressionNode.class);
         this.operator = Util.cast(operator, BinaryOperator.class);

@@ -185,7 +185,6 @@ public final class SemanticAnalysis
         // functions or types. By looking up now, we can report looked up variables later
         // as being used before being defined.
         DeclarationContext maybeCtx = scope.lookup(node.name);
-
         if (maybeCtx != null) {
             R.set(node, "decl",  maybeCtx.declaration);
             R.set(node, "scope", maybeCtx.scope);
@@ -402,7 +401,7 @@ public final class SemanticAnalysis
 
     // ---------------------------------------------------------------------------------------------
 
-    private void funCall (FunCallNode node)
+  /*  private void funCall (FunCallNode node)
     {
         this.inferenceContext = node;
 
@@ -445,11 +444,12 @@ public final class SemanticAnalysis
                         node.arguments.get(i));
             }
         });
-    }
+    }*/
     // For Logic Programming
     private void ruleCall (RuleCallNode node)
     {
         this.inferenceContext = node;
+        System.out.println(node);
 
         Attribute[] dependencies = new Attribute[node.arguments.size() + 1];
         dependencies[0] = node.rule.attr("type");
@@ -649,18 +649,22 @@ public final class SemanticAnalysis
     private void simpleType (SimpleTypeNode node)
     {
         final Scope scope = this.scope;
-
         R.rule()
         .by(r -> {
             // type declarations may occur after use
             DeclarationContext ctx = scope.lookup(node.name);
             DeclarationNode decl = ctx == null ? null : ctx.declaration;
-
-            if (ctx == null)
+            if(!Objects.equals(node.name, BoolType.INSTANCE.name())){
+                r.errorFor("[LOGIC PROGRAMMING][ERROR]: Not a "+ BoolType.INSTANCE.name() +" type but : " + node.name,
+                    node,
+                    node.attr("value"));
+                return;
+            }
+            if (ctx == null) {
                 r.errorFor("could not resolve: " + node.name,
                     node,
                     node.attr("value"));
-
+            }
             else if (!isTypeDecl(decl))
                 r.errorFor(format(
                     "%s did not resolve to a type declaration but to a %s declaration",
@@ -783,20 +787,23 @@ public final class SemanticAnalysis
     private void varDecl (VarDeclarationNode node)
     {
         this.inferenceContext = node;
-
         scope.declare(node.name, node);
         R.set(node, "scope", scope);
-
         R.rule(node, "type")
         .using(node.type, "value")
         .by(Rule::copyFirst);
-
         R.rule()
         .using(node.type.attr("value"), node.initializer.attr("type"))
         .by(r -> {
             Type expected = r.get(0);
             Type actual = r.get(1);
-
+            if(!(actual instanceof BoolType)){
+                r.error(format(
+                        "[LOGIC PROGRAMMING][ERROR]: For variable '%s': Not a %s value but got %s",
+                        node.name, expected, actual),
+                    node.initializer);
+                return;
+            }
             if (!isAssignableTo(actual, expected))
                 r.error(format(
                     "incompatible initializer type provided for variable `%s`: expected %s but got %s",
@@ -828,7 +835,7 @@ public final class SemanticAnalysis
 
     // ---------------------------------------------------------------------------------------------
 
-    private void funDecl (FunDeclarationNode node)
+   /* private void funDecl (FunDeclarationNode node)
     {
         scope.declare(node.name, node);
         scope = new Scope(node, scope);
@@ -857,15 +864,15 @@ public final class SemanticAnalysis
                 r.error("Missing return in function.", node);
             // NOTE: The returned value presence & type is checked in returnStmt().
         });
-    }
+    }*/
 
     // For Logic Programming
     private void ruleDecl (RuleDeclarationNode node)
     {
+        System.out.println(node);
         scope.declare(node.name, node);
         scope = new Scope(node, scope);
         R.set(node, "scope", scope);
-
         Attribute[] dependencies = new Attribute[node.parameters.size() + 1];
         dependencies[0] = node.returnType.attr("value");
         forEachIndexed(node.parameters, (i, param) ->

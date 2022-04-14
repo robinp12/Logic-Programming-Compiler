@@ -297,6 +297,11 @@ public final class SemanticAnalysisTests extends UraniumTestFixture
             "male(paul)");
     }
 
+    @Test public void testRule1() {
+        successInput("var paul: Bool = true\n" +
+            "rule male1(paul)");
+    }
+
     // ---------------------------------------------------------------------------------------------
 
     @Test public void testUnconditionalReturn()

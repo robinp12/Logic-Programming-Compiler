@@ -68,19 +68,19 @@ public class LogicGrammar extends Grammar
     public rule _while          = reserved("while");
     public rule _return         = reserved("return");
 
-    public rule number =
+    /*public rule number =
         seq(opt('-'), choice('0', digit.at_least(1)));
-
-    public rule integer =
+*/
+    /*public rule integer =
         number
             .push($ -> new IntLiteralNode($.span(), Long.parseLong($.str())))
             .word();
-
-    public rule floating =
+*/
+    /*public rule floating =
         seq(number, '.', digit.at_least(1))
             .push($ -> new FloatLiteralNode($.span(), Double.parseDouble($.str())))
             .word();
-
+*/
     public rule string_char = choice(
         seq(set('"', '\\').not(), any),
         seq('\\', set("\\nrt")));
@@ -127,8 +127,8 @@ public class LogicGrammar extends Grammar
     public rule basic_expression = choice(
         constructor,
         reference,
-        floating,
-        integer,
+//        floating,
+//        integer,
         string,
         paren_expression,
         array);
