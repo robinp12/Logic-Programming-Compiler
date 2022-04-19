@@ -31,8 +31,8 @@ Tests:
 TODO :
  ###`Variable` 
 
-- Pour l'instant j'ai modifié les variables de sorte qu'elles ne puissent que etre de type boolean.
-- TODO : Actuellement elles sont declarée comme ca : `var nor : Bool = true`, mais on souhaite ne laisser que la partie `var nor`. (Puisque la var est implicitement declarée a vrai)
+- Pour l'instant j'ai modifié les variables de sorte qu'elles ne puissent qu'etre de type boolean.
+<!-- - TODO : Actuellement elles sont declarée comme ca : `var nor : Bool = true`, mais on souhaite ne laisser que la partie `var nor`. (Puisque la var est implicitement declarée a vrai) --->
 
 ### `Fact` 
 - A fact is a predicate expression that makes a declarative statement about the problem domain. Whenever a variable occurs in a Prolog expression, it is assumed to be universally quantified. Note that all Prolog sentences must end with a period.

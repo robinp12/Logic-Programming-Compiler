@@ -449,7 +449,6 @@ public final class SemanticAnalysis
     private void ruleCall (RuleCallNode node)
     {
         this.inferenceContext = node;
-        System.out.println(node);
 
         Attribute[] dependencies = new Attribute[node.arguments.size() + 1];
         dependencies[0] = node.rule.attr("type");
@@ -869,7 +868,6 @@ public final class SemanticAnalysis
     // For Logic Programming
     private void ruleDecl (RuleDeclarationNode node)
     {
-        System.out.println(node);
         scope.declare(node.name, node);
         scope = new Scope(node, scope);
         R.set(node, "scope", scope);
