@@ -32,6 +32,7 @@ TODO :
  ###`Variable` 
 
 - Pour l'instant j'ai modifié les variables de sorte qu'elles ne puissent qu'etre de type boolean.
+- (RAPPEL : Les variables en logic programming ne sont pas comme en programmation impérative, elles sont utilisées pour des valeurs pas encore connu (placeholder) comme en mathématique.)
 <!-- - TODO : Actuellement elles sont declarée comme ca : `var nor : Bool = true`, mais on souhaite ne laisser que la partie `var nor`. (Puisque la var est implicitement declarée a vrai) --->
 
 ### `Fact` 
@@ -46,3 +47,5 @@ TODO :
 Thus a Prolog rule takes the form : left_hand_side :- right_hand_side .
 
 - `rule nom_rule(X,Y)`
+- `rule love(x,y) :likes(x,y) && likes(y,x)` cela veut dire une équivalence (<-->) entre x et y
+- `x -> y && y -> x : x <-> y`
